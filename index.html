@@ -524,21 +524,25 @@ Live Demo
 <h2 class="text-center mb-4">Contact Me</h2>
 
 <form action="https://formsubmit.co/mascotech12345@gmail.com" method="POST">
-    
+
+<input type="hidden" name="_captcha" value="false">
+<input type="hidden" name="_subject" value="New Portfolio Message">
+<input type="hidden" name="_template" value="table">
+
 <div class="row">
-    
-    <div class="col-md-6 mb-3">
-        <input type="text" class="form-control" placeholder="Name" required>
+
+<div class="col-md-6 mb-3">
+<input type="text" name="name" class="form-control" placeholder="Name" required>
 </div>
 
 <div class="col-md-6 mb-3">
-<input type="email" class="form-control" placeholder="Email" required>
+<input type="email" name="email" class="form-control" placeholder="Email" required>
 </div>
 
 </div>
 
 <div class="mb-3">
-    <textarea class="form-control" rows="5" placeholder="Message"></textarea>
+<textarea name="message" class="form-control" rows="5" placeholder="Message" required></textarea>
 </div>
 
 <button class="btn btn-green w-100">
