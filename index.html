@@ -1,128 +1,767 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MascoTech.com.ng</title>
-    <link rel="shortcut icon" href="./MASCOTECH.jpg">
-    <link rel="stylesheet" href="index.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MASCOTECH | Developer Portfolio</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
+
+<style>
+
+body{
+background:#0d1117;
+color:white;
+font-family:Segoe UI;
+scroll-behavior:smooth;
+overflow-x:hidden;
+margin: 0;
+padding: 0;
+}
+
+/* LOADER */
+
+#loader{
+position:fixed;
+width:100%;
+height:100%;
+background:#0d1117;
+display:flex;
+align-items:center;
+justify-content:center;
+z-index:9999;
+}
+
+.loader-circle{
+width:60px;
+height:60px;
+border:5px solid #30363d;
+border-top:5px solid #2ea043;
+border-radius:50%;
+animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+100%{transform:rotate(360deg);}
+}
+
+/* SIDENAV */
+
+.sidebar{
+position:fixed;
+left:0;
+top:0;
+height:100%;
+width:240px;
+background:#0d1117;
+border-right:1px solid #30363d;
+padding-top:30px;
+transition:0.35s ease;
+z-index:1000;
+}
+
+.sidebar a{
+display:block;
+padding:15px 25px;
+color:white;
+text-decoration:none;
+}
+
+.sidebar a:hover{
+background:#161b22;
+}
+
+/* MENU BUTTON */
+
+.menu-btn{
+position:fixed;
+top:20px;
+left:260px;
+font-size:28px;
+background:none;
+border:none;
+color:white;
+cursor:pointer;
+z-index:2000;
+}
+
+/* MAIN CONTENT SHIFT */
+
+.main{
+margin-left:240px;
+transition:0.4s;
+}
+
+/* HERO */
+
+.hero{
+min-height:100vh;
+height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+text-align:center;
+overflow:hidden;
+}
+
+.hero h1{
+font-size:3rem;
+font-weight:700;
+z-index:2;
+}
+
+/* HERO BACKGROUND ANIMATION */
+
+.hero::before{
+content:"";
+position:absolute;
+width:200%;
+height:200%;
+background:radial-gradient(circle,#2ea04322 1px,transparent 1px);
+background-size:50px 50px;
+animation:movebg 30s linear infinite;
+}
+
+@keyframes movebg{
+0%{transform:translate(0,0);}
+100%{transform:translate(-500px,-500px);}
+}
+/* PARTICLE BACKGROUND */
+
+#particles-bg{
+position:absolute;
+top:0;
+left:0;
+width:100%;
+height:100%;
+pointer-events:none;
+z-index:0;
+}
+
+.hero h1{
+font-size:clamp(1.8rem,5vw,3rem);
+}
+
+.hero .container{
+position:relative;
+z-index:2;
+}
+
+/* AURORA BACKGROUND */
+
+.aurora-bg{
+position:absolute;
+top:-50%;
+left:-50%;
+width:200%;
+height:200%;
+background:
+radial-gradient(circle at 20% 30%, #2ea04333 0%, transparent 40%),
+radial-gradient(circle at 80% 70%, #2ea04322 0%, transparent 40%),
+radial-gradient(circle at 60% 20%, #2ea04311 0%, transparent 40%);
+animation:auroraMove 20s linear infinite;
+z-index:0;
+}
+
+@keyframes auroraMove{
+0%{transform:translate(0,0);}
+50%{transform:translate(200px,150px);}
+100%{transform:translate(0,0);}
+}
+
+/* CURSOR TRAIL EFFECT */
+
+#cursor-trail{
+position:fixed;
+width:12px;
+height:12px;
+background:#2ea043;
+border-radius:50%;
+pointer-events:none;
+z-index:9999;
+box-shadow:0 0 15px #2ea043, 0 0 30px #2ea043;
+transform:translate(-50%, -50%);
+transition:transform 0.05s linear;
+}
+
+/* GLASS */
+
+.glass{
+background:rgba(255,255,255,0.05);
+backdrop-filter:blur(12px);
+border-radius:20px;
+border:1px solid rgba(255,255,255,0.1);
+padding:30px;
+}
+
+/* SKILLS */
+
+.skill-bar{
+height:8px;
+background:#30363d;
+border-radius:10px;
+overflow:hidden;
+}
+
+.skill-progress{
+height:8px;
+background:#2ea043;
+width:0;
+transition:width 2s ease;
+}
+
+/* BUTTON */
+
+.btn-green{
+background:#2ea043;
+color:white;
+}
+
+/* PROJECT */
+
+.project img{
+border-radius:12px;
+}
+
+/* FORM */
+
+input, textarea{
+background:#363738 !important;
+border:none !important;
+color:white !important;
+}
+
+input::placeholder, textarea::placeholder{
+color:#d1d1d1;
+}
+
+input:focus, textarea:focus{
+outline:none !important;
+box-shadow:none !important;
+background:#3f3f41 !important;
+}
+
+/* FOOTER */
+
+footer{
+border-top:1px solid #30363d;
+padding:30px;
+text-align:center;
+}
+
+/* MOBILE */
+
+@media(max-width:900px){
+
+.sidebar{
+left:-240px;
+}
+
+.sidebar.active{
+left:0;
+}
+
+.main{
+margin-left:0;
+padding:80px 20px;
+}
+
+.menu-btn{
+left:20px;
+}
+
+}
+
+</style>
 </head>
+
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
-    <div class="container">
-        <a class="navbar-brand fw-bold" href="#">My Portfolio</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
-                <li class="nav-item"><a class="nav-link" href="#skills">Skills</a></li>
-                <li class="nav-item"><a class="nav-link" href="#projects">Projects</a></li>
-                <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
-            </ul>
-        </div>
-    </div>
-</nav>
 
+<div id="loader">
+<div class="loader-circle"></div>
+</div>
+
+<div id="cursor-trail"></div>
+
+
+<!-- SIDEBAR -->
+
+<div class="sidebar" id="sidebar">
+    <h2 class="text-white pt-3 fw-bold">
+        <a href="#main" style="color:white;text-decoration:none;">MASCOTECH</a>
+    </h2>
+    <a href="#about">About</a>
+    <a href="#projects">Projects</a>
+    <a href="#skills">Skills</a>
+    <a href="#testimonials">Testimonials</a>
+    <a href="#contact">Contact</a>
+    
+</div>
+
+<div class="main" id="main">
+    
+    <!-- HERO -->
+    
 <section class="hero">
-    <div class="container">
-        <h1>Hello, I'm a Web Developer</h1>
-        <p class="lead mt-3">I build clean, responsive websites using HTML, CSS, and Bootstrap.</p>
-    </div>
+<div class="aurora-bg"></div>
+    
+<canvas id="particles-bg"></canvas>
+<i class="fas fa-bars d-xl-none d-lg-none d-sm-block menu-btn" id="menuBtn"></i>
+    
+<div class="container">
+
+<h1 class="fw-bold mb-3" style="font-family: cursive;" data-aos="fade-up">
+Hi, I'm Mamoud
+</h1>
+
+<img src="./MASCOTECH.jpg" style="width: 100px; border-radius: 100%;" alt="">
+
+<h1 data-aos="fade-up">
+I design and build high-performance web experiences.
+</h1>
+
+<h3 class="mt-3">
+<span id="typing"></span>
+</h3>
+
+<div class="mt-4">
+
+<a href="./index.html" class="btn btn-green me-2">
+<i class="fa-solid fa-download"></i> Download CV
+</a>
+
+<a href="#projects" class="btn btn-outline-light">
+View Projects
+</a>
+
+</div>
+
+</div>
+
 </section>
 
-<section id="about" class="py-5">
-    <div class="container">
-        <h2 class="text-center mb-4">About Me</h2>
-        <div class="row">
-            <div class="front col-sm-12 col-md-6">
-                <p class="text-center mx-auto" style="max-width: 700px;">
-                    My name is Mamoud and my tech name is MascoTech. I'm a young web developer with strong skills in HTML, CSS, and Bootstrap. I enjoy creating clean, responsive, and modern website layouts.
-                    I'm also learning JavaScript and building new skills every day. I focus on good design, clean code, and making websites look great on all devices.
-                </p> 
-            </div>
-            <div class="col-sm-12 col-md-6">
-                <img src="./MASCOTECH.jpg" class="img-fluid border rounded" alt="">
-            </div>
-        </div>
-    </div>
+<!-- ABOUT -->
+
+<section id="about" class="container py-5">
+
+<div class="glass" data-aos="fade-up">
+
+<h2>About Me</h2>
+
+<p>
+Hi, I'm <b>MASCOTECH</b>. I build modern, responsive and high-performance websites.
+I specialize in creating fast, scalable and visually stunning web applications using modern technologies.
+</p>
+
+</div>
+
 </section>
 
- <section class="container my-5" id="skills">
-    <h2 class="mb-4 text-center">Skills</h2>
-    <div class="row text-center">
-      <div class="col-md-3"><strong>HTML</strong></div>
-      <div class="col-md-3"><strong>CSS</strong></div>
-      <div class="col-md-3"><strong>Bootstrap</strong></div>
-      <div class="col-md-3"><strong>JavaScript</strong></div>
-    </div>
-  </section>
+<!-- PROJECTS -->
 
-<section class="py-5 bg-white">
-    <div class="container">
-        <h2 class="text-center mb-4">Message for Clients</h2>
-        <p class="mx-auto text-center" style="max-width: 800px;">
-            Hi! Thank you for visiting my portfolio. I create simple, clean, and responsive websites using HTML, CSS, and Bootstrap. I can help you with:
-            <br><br>
-            • building clean landing pages <br>
-            • improving your website’s design <br>
-            • making your site responsive for phones and tablets <br>
-            • fixing layout and styling issues <br><br>
-            I'm dedicated, easy to communicate with, and always focused on delivering good results. Feel free to check out my projects below!
-        </p>
-    </div>
+<section id="projects" class="container py-5">
+
+<h2 class="mb-4 text-center">Projects</h2>
+
+<div class="row g-4">
+
+<div class="col-md-4">
+
+<div class="glass project" data-aos="zoom-in">
+
+<img src="project1.png" class="img-fluid">
+
+<h4 class="mt-3">Portfolio Website</h4>
+
+<p>Modern responsive portfolio built with Bootstrap.</p>
+
+<div>
+
+<a href="#" class="btn btn-green btn-sm">
+<i class="fab fa-github"></i> GitHub
+</a>
+
+<a href="#" class="btn btn-outline-light btn-sm">
+Live Demo
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-md-4">
+
+<div class="glass project" data-aos="zoom-in">
+
+<img src="project2.png" class="img-fluid">
+
+<h4 class="mt-3">Business Website</h4>
+
+<p>Professional business landing page.</p>
+
+<div>
+
+<a href="#" class="btn btn-green btn-sm">
+<i class="fab fa-github"></i> GitHub
+</a>
+
+<a href="#" class="btn btn-outline-light btn-sm">
+Live Demo
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-md-4">
+
+<div class="glass project" data-aos="zoom-in">
+
+<img src="project3.png" class="img-fluid">
+
+<h4 class="mt-3">Web Application</h4>
+
+<p>Full stack modern web app.</p>
+
+<div>
+
+<a href="#" class="btn btn-green btn-sm">
+<i class="fab fa-github"></i> GitHub
+</a>
+
+<a href="#" class="btn btn-outline-light btn-sm">
+Live Demo
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
 </section>
 
-<section id="projects" class="py-5 bg-light">
-    <div class="container">
-        <h2 class="text-center mb-5">My Projects</h2>
+<!-- SKILLS -->
 
-        <div class="row g-4">
-            <div class="col-md-4">
-                <div class="card project-card shadow-sm">
-                    <div class="card-body">
-                        <h4 class="card-title">Business Landing Page</h4>
-                        <p class="card-text">A clean and modern landing page built with Bootstrap, featuring a hero section, services, and contact area.</p>
-                    </div>
-                </div>
-            </div>
+<section id="skills" class="container py-5">
 
-            <div class="col-md-4">
-                <div class="card project-card shadow-sm">
-                    <div class="card-body">
-                        <h4 class="card-title">Personal Portfolio</h4>
-                        <p class="card-text">A responsive portfolio page with skills, projects, and a clean layout using Bootstrap grids.</p>
-                    </div>
-                </div>
-            </div>
+<h2 class="text-center mb-4">Skills</h2>
 
-            <div class="col-md-4">
-                <div class="card project-card shadow-sm">
-                    <div class="card-body">
-                        <h4 class="card-title">Event / School Club Site</h4>
-                        <p class="card-text">A simple event page with date, information, and gallery sections, designed for student or community events.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+<div class="glass">
+
+<p>HTML</p>
+<div class="skill-bar">
+<div class="skill-progress" data-width="93%"></div>
+</div>
+
+<p class="mt-3">CSS</p>
+<div class="skill-bar">
+<div class="skill-progress" data-width="91%"></div>
+</div>
+
+<p class="mt-3">JavaScript</p>
+<div class="skill-bar">
+<div class="skill-progress" data-width="85%"></div>
+</div>
+
+<p class="mt-3">Bootstrap</p>
+<div class="skill-bar">
+<div class="skill-progress" data-width="92%"></div>
+</div>
+
+</div>
+
 </section>
 
-<section id="contact" class="py-5">
-    <div class="container">
-        <h2 class="text-center mb-4">Contact Me</h2>
-        <p class="text-center">WhatsApp Contact: <strong>09028224453</strong></p>
-        <p class="text-center">Email: <strong>mascotech7@gmail.com</strong></p>
-    </div>
+<!-- TESTIMONIALS -->
+
+<section id="testimonials" class="container py-5">
+    
+<h2 class="text-center mb-4">Testimonials</h2>
+
+<div class="row g-4">
+
+    <div class="col-md-4">
+<div class="glass">
+<p>"Mascotech built an amazing website for my business."</p>
+<b>- Client</b>
+</div>
+</div>
+
+<div class="col-md-4">
+<div class="glass">
+<p>"Very professional developer and fast delivery."</p>
+<b>- Startup Founder</b>
+</div>
+</div>
+
+<div class="col-md-4">
+<div class="glass">
+<p>"Great design and performance optimization."</p>
+<b>- Tech Company</b>
+</div>
+</div>
+
+</div>
+
+</section>
+
+<!-- CONTACT -->
+
+<section id="contact" class="container py-5">
+    
+<div class="glass">
+
+<h2 class="text-center mb-4">Contact Me</h2>
+
+<form action="https://formsubmit.co/mascotech12345@gmail.com" method="POST">
+    
+<div class="row">
+    
+    <div class="col-md-6 mb-3">
+        <input type="text" class="form-control" placeholder="Name" required>
+</div>
+
+<div class="col-md-6 mb-3">
+<input type="email" class="form-control" placeholder="Email" required>
+</div>
+
+</div>
+
+<div class="mb-3">
+    <textarea class="form-control" rows="5" placeholder="Message"></textarea>
+</div>
+
+<button class="btn btn-green w-100">
+Send Message
+</button>
+
+</form>
+
+<div class="text-center mt-4">
+    
+    <p>Email: mascotech12345@gmail.com</p>
+    <p>Phone: 09028224453</p>
+    
+    <a href="https://wa.me/2349028224453" class="btn btn-green">
+        <i class="fab fa-whatsapp"></i> WhatsApp Me
+    </a>
+
+</div>
+
+</div>
+
 </section>
 
 <footer>
-    <p>© 2025 MascoTech. All rights reserved.</p>
+
+<p>© 2026 MASCOTECH</p>
+
 </footer>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-<script src="./index.js"></script>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+
+<script>
+
+AOS.init();
+
+var typed = new Typed("#typing", {
+strings:[
+    "Frontend Developer",
+"Web Designer",
+"Freelancer",
+"Building modern web experiences"
+],
+typeSpeed:60,
+backSpeed:40,
+loop:true
+});
+
+window.onload=function(){
+document.getElementById("loader").style.display="none";
+}
+
+document.getElementById("menuBtn").onclick=function(){
+document.getElementById("sidebar").classList.toggle("active");
+}
+
+/* PARTICLE GALAXY WITH MOUSE INTERACTION */
+
+const canvas = document.getElementById("particles-bg");
+const ctx = canvas.getContext("2d");
+
+const hero = document.querySelector(".hero");
+
+function resizeCanvas(){
+canvas.width = hero.offsetWidth;
+canvas.height = hero.offsetHeight;
+}
+
+resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
+
+let particles = [];
+let mouse = {
+x: null,
+y: null,
+radius: 120
+};
+
+window.addEventListener("mousemove", function(event){
+mouse.x = event.x;
+mouse.y = event.y;
+});
+
+class Particle{
+constructor(){
+this.x = Math.random()*canvas.width;
+this.y = Math.random()*canvas.height;
+this.size = 2;
+this.speedX = Math.random()*1 - 0.5;
+this.speedY = Math.random()*1 - 0.5;
+}
+
+update(){
+
+this.x += this.speedX;
+this.y += this.speedY;
+
+let dx = mouse.x - this.x;
+let dy = mouse.y - this.y;
+let distance = Math.sqrt(dx*dx + dy*dy);
+
+if(distance < mouse.radius){
+this.x -= dx/20;
+this.y -= dy/20;
+}
+
+if(this.x > canvas.width) this.x = 0;
+if(this.x < 0) this.x = canvas.width;
+
+if(this.y > canvas.height) this.y = 0;
+if(this.y < 0) this.y = canvas.height;
+
+}
+
+draw(){
+ctx.fillStyle = "#2ea043";
+ctx.beginPath();
+ctx.arc(this.x,this.y,this.size,0,Math.PI*2);
+ctx.fill();
+}
+
+}
+
+function initParticles(){
+particles = [];
+for(let i=0;i<120;i++){
+particles.push(new Particle());
+}
+}
+
+function connectParticles(){
+
+for(let a=0;a<particles.length;a++){
+for(let b=a;b<particles.length;b++){
+
+let dx = particles[a].x - particles[b].x;
+let dy = particles[a].y - particles[b].y;
+
+let distance = dx*dx + dy*dy;
+
+if(distance < 12000){
+
+ctx.strokeStyle = "rgba(46,160,67,0.2)";
+ctx.lineWidth = 1;
+ctx.beginPath();
+ctx.moveTo(particles[a].x,particles[a].y);
+ctx.lineTo(particles[b].x,particles[b].y);
+ctx.stroke();
+
+}
+
+}
+}
+
+}
+
+function animateParticles(){
+
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+for(let i=0;i<particles.length;i++){
+particles[i].update();
+particles[i].draw();
+}
+
+connectParticles();
+
+requestAnimationFrame(animateParticles);
+
+}
+
+initParticles();
+animateParticles();
+
+/* CURSOR GLOW TRAIL */
+
+const cursor = document.getElementById("cursor-trail");
+
+document.addEventListener("mousemove", function(e){
+cursor.style.left = e.clientX + "px";
+cursor.style.top = e.clientY + "px";
+});
+
+const heroSection = document.querySelector(".hero");
+
+
+/* SKILLS ANIMATION */
+
+const skillBars = document.querySelectorAll(".skill-progress");
+
+function animateSkills(){
+
+skillBars.forEach(bar=>{
+bar.style.width = bar.dataset.width;
+});
+
+}
+
+const skillSection = document.getElementById("skills");
+
+window.addEventListener("scroll", function(){
+
+const sectionTop = skillSection.offsetTop - 400;
+
+if(window.scrollY > sectionTop){
+
+animateSkills();
+
+}
+
+});
+
+document.querySelectorAll(".sidebar a").forEach(link=>{
+link.addEventListener("click",function(e){
+e.preventDefault();
+document.querySelector(this.getAttribute("href")).scrollIntoView({
+behavior:"smooth"
+});
+});
+});
+</script>
+
 </body>
 </html>
