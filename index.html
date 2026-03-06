@@ -100,12 +100,14 @@ transition:0.4s;
 
 .hero{
 min-height:100vh;
-height:100vh;
+min-height:100dvh;
 display:flex;
 align-items:center;
 justify-content:center;
 text-align:center;
 overflow:hidden;
+position:static;
+width:100%;
 }
 
 .hero h1{
@@ -119,11 +121,11 @@ z-index:2;
 .hero::before{
 content:"";
 position:absolute;
-width:150%;
-height:150%;
+width:200%;
+height:200%;
 background:radial-gradient(circle,#2ea04322 1px,transparent 1px);
-background-size:60px 60px;
-animation:movebg 40s linear infinite;
+background-size:50px 50px;
+animation:movebg 30s linear infinite;
 }
 
 @keyframes movebg{
@@ -138,7 +140,6 @@ top:0;
 left:0;
 width:100%;
 height:100%;
-pointer-events:none;
 z-index:0;
 }
 
@@ -274,6 +275,15 @@ padding:80px 20px;
 left:20px;
 }
 
+@media(max-width:900px){
+
+.main{
+margin-left:0;
+padding:80px 15px;
+width:100%;
+}
+
+}
 }
 
 </style>
