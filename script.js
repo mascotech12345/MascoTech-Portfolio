@@ -3,9 +3,11 @@ AOS.init();
 var typed = new Typed("#typing", {
 strings:[
     "Frontend Developer",
-"Web Designer",
-"Freelancer",
-"Building modern web experiences"
+    "Backend Developer",
+    "Fullstack Developer",
+    "Web Designer",
+    "Freelancer",
+    "Building modern web experiences"
 ],
 typeSpeed:60,
 backSpeed:40,
