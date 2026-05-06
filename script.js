@@ -14,6 +14,10 @@ backSpeed:40,
 loop:true
 });
 
+function downloadCV(){
+    alert("Am sorry. My CV is not avalaible for download at the moment.")
+}
+
 window.onload=function(){
 document.getElementById("loader").style.display="none";
 }
