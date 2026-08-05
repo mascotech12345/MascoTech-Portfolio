@@ -87,7 +87,7 @@ export default function App() {
   const handleWhatsAppRedirect = (e: React.FormEvent) => {
     e.preventDefault()
     
-    const baseNumber = '2349028224453'
+    // const baseNumber = '2349028224453'
     const formattedText = `Hello MASCOTECH, you have a new portfolio inquiry!%0A%0A` +
                           `*Name:* ${encodeURIComponent(formData.name)}%0A` +
                           `*Phone:* ${encodeURIComponent(formData.phone)}%0A` +
