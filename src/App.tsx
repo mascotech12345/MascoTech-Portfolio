@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 interface Project {
   title: string
@@ -16,6 +16,13 @@ interface Skill {
 interface NavLink {
   href: string
   label: string
+}
+
+interface Stat {
+  value: number
+  suffix: string
+  label: string
+  description: string
 }
 
 const projects: Project[] = [
@@ -94,26 +101,30 @@ const services = [
   }
 ]
 
-const stats = [
+const stats: Stat[] = [
   {
-    number: "10+",
-    label: "Technologies",
-    description: "Modern tools and frameworks"
+    value: 10,
+    suffix: '+',
+    label: 'Technologies',
+    description: 'Modern tools and frameworks'
   },
   {
-    number: "15+",
-    label: "Projects",
-    description: "Completed successfully"
+    value: 15,
+    suffix: '+',
+    label: 'Projects',
+    description: 'Completed successfully'
   },
   {
-    number: "100%",
-    label: "Responsive",
-    description: "Desktop, tablet & mobile"
+    value: 100,
+    suffix: '%',
+    label: 'Responsive',
+    description: 'Desktop, tablet & mobile'
   },
   {
-    number: "24/7",
-    label: "Support",
-    description: "Available for clients"
+    value: 24,
+    suffix: '/7',
+    label: 'Support',
+    description: 'Available for clients'
   }
 ]
 
@@ -231,6 +242,71 @@ function StatusPanel() {
           <span className="mono muted">DATE: {ibadanDate}</span>
         </div>
       </div>
+    </div>
+  )
+}
+
+function StatCard({ stat, delay }: { stat: Stat; delay: number }) {
+  const ref = useRef<HTMLDivElement>(null)
+  const [count, setCount] = useState(0)
+  const [started, setStarted] = useState(false)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (prefersReduced) {
+      setCount(stat.value)
+      setStarted(true)
+      return
+    }
+
+    const observer = new IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            setStarted(true)
+            observer.unobserve(el)
+          }
+        })
+      },
+      { threshold: 0.4 }
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [stat.value])
+
+  useEffect(() => {
+    if (!started) return
+
+    const duration = 1400
+    const startTime = performance.now()
+    let frame: number
+
+    const tick = (now: number) => {
+      const progress = Math.min((now - startTime) / duration, 1)
+      const eased = 1 - Math.pow(1 - progress, 3)
+      setCount(Math.round(eased * stat.value))
+      if (progress < 1) frame = requestAnimationFrame(tick)
+    }
+
+    frame = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(frame)
+  }, [started, stat.value])
+
+  return (
+    <div
+      ref={ref}
+      className="stat-card reveal"
+      style={{ '--reveal-delay': `${delay}ms` } as React.CSSProperties}
+    >
+      <h3>
+        {count}
+        <span className="stat-suffix">{stat.suffix}</span>
+      </h3>
+      <h4>{stat.label}</h4>
+      <p>{stat.description}</p>
     </div>
   )
 }
@@ -398,7 +474,7 @@ export default function App() {
       </header>
 
       <main className="main-content">
-        <section className="hero">
+        <section className="hero reveal">
           <div className="hero-grid">
             <div className="hero-text-block reveal">
               <span className="eyebrow">DEVELOPMENT ENVIRONMENT</span>
@@ -418,75 +494,56 @@ export default function App() {
           </div>
         </section>
 
-        <section id="about" className="section">
-          <div className="section-header reveal">
-            <span className="field-label">01 PROFILE</span>
-            <h2>About me</h2>
+        <section id="about" className="section reveal">
+          <div className="section-header">
+            <span className="field-label reveal">01 PROFILE</span>
+            <h2 className="reveal" style={{ '--reveal-delay': '100ms' } as React.CSSProperties}>About me</h2>
           </div>
-          <p className="body-text reveal">
+          <p className="body-text reveal" style={{ '--reveal-delay': '200ms' } as React.CSSProperties}>
             I am a performance-driven frontend and backend developer focused on building scalable websites that optimize workflows for real-world businesses. My technical emphasis circles around engineering responsive layouts, live asynchronous data synchronization, and state management systems using React and TypeScript.
           </p>
         </section>
 
-        <section id="stats" className="section">
+        <section id="stats" className="section reveal">
 
-          <div className="section-header reveal">
-
-            <span className="field-label">
+          <div className="section-header">
+            <span className="field-label reveal">
               02 AT A GLANCE
             </span>
-
-            <h2>By the numbers</h2>
-
+            <h2 className="reveal" style={{ '--reveal-delay': '100ms' } as React.CSSProperties}>By the numbers</h2>
           </div>
 
           <div className="stats-grid">
 
-            {stats.map((stat) => (
-
-              <div
-                key={stat.label}
-                className="stat-card reveal"
-              >
-
-                <h3>{stat.number}</h3>
-
-                <h4>{stat.label}</h4>
-
-                <p>{stat.description}</p>
-
-              </div>
-
+            {stats.map((stat, i) => (
+              <StatCard key={stat.label} stat={stat} delay={i * 100} />
             ))}
 
           </div>
 
         </section>
 
-        <section id="services" className="section">
+        <section id="services" className="section reveal">
 
-          <div className="section-header reveal">
-
-            <span className="field-label">
+          <div className="section-header">
+            <span className="field-label reveal">
               03 SERVICES
             </span>
-
-            <h2>What I Can Do</h2>
-
-            <p className="body-text">
+            <h2 className="reveal" style={{ '--reveal-delay': '100ms' } as React.CSSProperties}>What I Can Do</h2>
+            <p className="body-text reveal" style={{ '--reveal-delay': '200ms' } as React.CSSProperties}>
               I build complete digital experiences, from intuitive interfaces to
               scalable backend systems that help businesses grow.
             </p>
-
           </div>
 
           <div className="services-grid">
 
-            {services.map(service => (
+            {services.map((service, i) => (
 
               <div
                 key={service.title}
                 className="service-card reveal"
+                style={{ '--reveal-delay': `${(i % 3) * 100}ms` } as React.CSSProperties}
               >
 
                 <div className="service-icon">
@@ -515,19 +572,20 @@ export default function App() {
 
         </section>
 
-        <section id="projects" className="section">
-          <div className="section-header reveal">
-            <span className="field-label">04 PRODUCTION BUILD</span>
-            <h2>Recent operations</h2>
+        <section id="projects" className="section reveal">
+          <div className="section-header">
+            <span className="field-label reveal">04 PRODUCTION BUILD</span>
+            <h2 className="reveal" style={{ '--reveal-delay': '100ms' } as React.CSSProperties}>Recent operations</h2>
           </div>
           <div className="project-grid">
-            {projects.map(p => (
+            {projects.map((p, i) => (
               <a
                 key={p.title}
                 href={p.href}
                 target="_blank"
                 rel="noreferrer"
                 className="project-card reveal"
+                style={{ '--reveal-delay': `${i * 100}ms` } as React.CSSProperties}
               >
                 <div className="card-top">
                   <span className="mono role-tag">{p.role}</span>
@@ -541,18 +599,22 @@ export default function App() {
           </div>
         </section>
 
-        <section id="skills" className="section">
-          <div className="section-header reveal">
-            <span className="field-label">05 CORE COMPETENCIES</span>
-            <h2>Tech stack</h2>
+        <section id="skills" className="section reveal">
+          <div className="section-header">
+            <span className="field-label reveal">05 CORE COMPETENCIES</span>
+            <h2 className="reveal" style={{ '--reveal-delay': '100ms' } as React.CSSProperties}>Tech stack</h2>
           </div>
           <div className="skills-grid-layout">
             <div className="skills-cards">
-              {skills.map((skill) => {
+              {skills.map((skill, i) => {
                 const radius = 48
                 const circumference = 2 * Math.PI * radius
                 return (
-                  <div key={skill.name} className="skill-card reveal">
+                  <div
+                    key={skill.name}
+                    className="skill-card reveal"
+                    style={{ '--reveal-delay': `${(i % 5) * 80}ms` } as React.CSSProperties}
+                  >
 
                     <h3 className="skill-title">{skill.name}</h3>
 
@@ -623,11 +685,11 @@ export default function App() {
           </div>
         </section>
 
-        <section id="approach" className="section">
+        <section id="approach" className="section reveal">
 
-          <div className="section-header reveal">
-            <span className="field-label">06 DEVELOPMENT APPROACH</span>
-            <h2>How I Work</h2>
+          <div className="section-header">
+            <span className="field-label reveal">06 DEVELOPMENT APPROACH</span>
+            <h2 className="reveal" style={{ '--reveal-delay': '100ms' } as React.CSSProperties}>How I Work</h2>
           </div>
 
           <div className="approach-grid">
@@ -675,7 +737,7 @@ export default function App() {
 
             </div>
 
-            <div className="approach-card reveal">
+            <div className="approach-card reveal" style={{ '--reveal-delay': '120ms' } as React.CSSProperties}>
 
               <span className="mono approach-title">
                 DEVELOPMENT WORKFLOW
@@ -722,10 +784,10 @@ export default function App() {
 
         </section>
 
-        <section id="contact" className="section">
-          <div className="section-header reveal">
-            <span className="field-label">07 COMMUNICATIONS</span>
-            <h2>Drop a line</h2>
+        <section id="contact" className="section reveal">
+          <div className="section-header">
+            <span className="field-label reveal">07 COMMUNICATIONS</span>
+            <h2 className="reveal" style={{ '--reveal-delay': '100ms' } as React.CSSProperties}>Drop a line</h2>
           </div>
           <div className="contact-grid">
             <form onSubmit={handleWhatsAppRedirect} className="contact-form reveal">
@@ -892,7 +954,7 @@ export default function App() {
 
         <div className="footer-grid">
 
-          <div className="footer-brand">
+          <div className="footer-brand reveal">
 
             <h2>
               MASCO<span className="brand-accent">TECH</span>
@@ -905,7 +967,7 @@ export default function App() {
 
           </div>
 
-          <div className="footer-links">
+          <div className="footer-links reveal" style={{ '--reveal-delay': '80ms' } as React.CSSProperties}>
 
             <h4>Navigation</h4>
 
@@ -923,7 +985,7 @@ export default function App() {
 
           </div>
 
-          <div className="footer-contact">
+          <div className="footer-contact reveal" style={{ '--reveal-delay': '160ms' } as React.CSSProperties}>
 
             <h4>Contact</h4>
 
