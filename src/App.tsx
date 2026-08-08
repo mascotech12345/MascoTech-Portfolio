@@ -150,7 +150,8 @@ function useRevealOnScroll(): void {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
             entry.target.classList.add('is-visible')
-            observer.unobserve(entry.target)
+          } else {
+            entry.target.classList.remove('is-visible')
           }
         })
       },
@@ -249,7 +250,6 @@ function StatusPanel() {
 function StatCard({ stat, delay }: { stat: Stat; delay: number }) {
   const ref = useRef<HTMLDivElement>(null)
   const [count, setCount] = useState(0)
-  const [started, setStarted] = useState(false)
 
   useEffect(() => {
     const el = ref.current
@@ -258,42 +258,45 @@ function StatCard({ stat, delay }: { stat: Stat; delay: number }) {
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (prefersReduced) {
       setCount(stat.value)
-      setStarted(true)
       return
+    }
+
+    let frame: number
+
+    const runCount = () => {
+      const duration = 1400
+      const startTime = performance.now()
+
+      const tick = (now: number) => {
+        const progress = Math.min((now - startTime) / duration, 1)
+        const eased = 1 - Math.pow(1 - progress, 3)
+        setCount(Math.round(eased * stat.value))
+        if (progress < 1) frame = requestAnimationFrame(tick)
+      }
+
+      frame = requestAnimationFrame(tick)
     }
 
     const observer = new IntersectionObserver(
       entries => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
-            setStarted(true)
-            observer.unobserve(el)
+            cancelAnimationFrame(frame)
+            setCount(0)
+            runCount()
+          } else {
+            cancelAnimationFrame(frame)
           }
         })
       },
       { threshold: 0.4 }
     )
     observer.observe(el)
-    return () => observer.disconnect()
-  }, [stat.value])
-
-  useEffect(() => {
-    if (!started) return
-
-    const duration = 1400
-    const startTime = performance.now()
-    let frame: number
-
-    const tick = (now: number) => {
-      const progress = Math.min((now - startTime) / duration, 1)
-      const eased = 1 - Math.pow(1 - progress, 3)
-      setCount(Math.round(eased * stat.value))
-      if (progress < 1) frame = requestAnimationFrame(tick)
+    return () => {
+      observer.disconnect()
+      cancelAnimationFrame(frame)
     }
-
-    frame = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(frame)
-  }, [started, stat.value])
+  }, [stat.value])
 
   return (
     <div
@@ -339,9 +342,15 @@ export default function App() {
 
           if(entry.isIntersecting){
 
+            entry.target.classList.remove("animate")
+
+            void (entry.target as HTMLElement).offsetWidth
+
             entry.target.classList.add("animate")
 
-            observer.unobserve(entry.target)
+          } else {
+
+            entry.target.classList.remove("animate")
 
           }
 
@@ -357,7 +366,7 @@ export default function App() {
 
     return () => observer.disconnect()
 
-  }, []) 
+  }, [])
 
   useEffect(() => {
     const onScroll = () => setShowTop(window.scrollY > 600)
