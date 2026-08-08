@@ -119,9 +119,11 @@ const stats = [
 
 const navLinks: NavLink[] = [
   { href: '#about', label: 'About' },
+  { href: '#stats', label: 'At a Glance' },
+  { href: '#services', label: 'Services' },
   { href: '#projects', label: 'Projects' },
   { href: '#skills', label: 'Skills' },
-  { href: '#contact', label: 'Contact' },
+  { href: '#approach', label: 'Approach' },
 ]
 
 function useRevealOnScroll(): void {
@@ -149,22 +151,39 @@ function useRevealOnScroll(): void {
 }
 
 function useActiveSection(): string {
-  const [active, setActive] = useState<string>('')
+  const [active, setActive] = useState('')
+
   useEffect(() => {
     const sections = navLinks
-      .map(l => document.querySelector(l.href))
+      .map(link => document.querySelector(link.href))
       .filter((el): el is Element => el !== null)
+
+    if (!sections.length) return
+
     const observer = new IntersectionObserver(
       entries => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) setActive('#' + entry.target.id)
-        })
+        const visibleSections = entries
+          .filter(entry => entry.isIntersecting)
+          .sort(
+            (a, b) =>
+              b.intersectionRatio - a.intersectionRatio
+          )
+
+        if (visibleSections.length > 0) {
+          setActive(`#${visibleSections[0].target.id}`)
+        }
       },
-      { rootMargin: '-45% 0px -50% 0px' }
+      {
+        rootMargin: '-25% 0px -60% 0px',
+        threshold: [0.1, 0.25, 0.5, 0.75],
+      }
     )
-    sections.forEach(s => observer.observe(s))
+
+    sections.forEach(section => observer.observe(section))
+
     return () => observer.disconnect()
   }, [])
+
   return active
 }
 
@@ -270,6 +289,34 @@ export default function App() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMenuOpen(false)
+    }
+    const handleResize = () => {
+      if (window.innerWidth > 768) setMenuOpen(false)
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    window.addEventListener('resize', handleResize)
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+      window.removeEventListener('resize', handleResize)
+    }
+  }, [])
+
+  useEffect(() => {
+    document.title = 'MASCOTECH — Frontend & Full Stack Developer'
+    const description =
+      'Portfolio of Mamoud (MASCOTECH), a frontend and full-stack developer building fast, scalable web applications with React, TypeScript and Firebase.'
+    let meta = document.querySelector('meta[name="description"]')
+    if (!meta) {
+      meta = document.createElement('meta')
+      meta.setAttribute('name', 'description')
+      document.head.appendChild(meta)
+    }
+    meta.setAttribute('content', description)
+  }, [])
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
 
@@ -304,20 +351,26 @@ export default function App() {
 
   const closeMenu = () => setMenuOpen(false)
 
+  const scrollToTop = (e: React.MouseEvent) => {
+    e.preventDefault()
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+    closeMenu()
+  }
+
   return (
     <div className="page">
       <header className="topbar">
         <div className="topbar-container">
-          <div className="brand">
+          <a href="#" className="brand" onClick={scrollToTop}>
             MASCO<span className="brand-accent">TECH</span>
-          </div>
-          <nav className={`desktop-nav ${menuOpen ? "is-open" : ""}`}>
+          </a>
+          <nav className={`desktop-nav ${menuOpen ? 'is-open' : ''}`}>
             {navLinks.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
+                className={activeSection === link.href ? 'active-link' : ''}
                 onClick={closeMenu}
-                className={activeSection === link.href ? "active-link" : ""}
               >
                 {link.label}
               </a>
@@ -331,13 +384,15 @@ export default function App() {
               Contact
             </a>
           </nav>
+
           <button
-              type="button"
-              className={`menu-toggle ${menuOpen ? 'is-open' : ''}`}
-              aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-              onClick={() => setMenuOpen(!menuOpen)}
+            type="button"
+            className={`menu-toggle ${menuOpen ? 'is-open' : ''}`}
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen(prev => !prev)}
           >
-              {menuOpen ? "✕" : "☰"}
+            {menuOpen ? '✕' : '☰'}
           </button>
         </div>
       </header>
@@ -462,7 +517,7 @@ export default function App() {
 
         <section id="projects" className="section">
           <div className="section-header reveal">
-            <span className="field-label">02 PRODUCTION BUILD</span>
+            <span className="field-label">04 PRODUCTION BUILD</span>
             <h2>Recent operations</h2>
           </div>
           <div className="project-grid">
@@ -488,7 +543,7 @@ export default function App() {
 
         <section id="skills" className="section">
           <div className="section-header reveal">
-            <span className="field-label">03 CORE COMPETENCIES</span>
+            <span className="field-label">05 CORE COMPETENCIES</span>
             <h2>Tech stack</h2>
           </div>
           <div className="skills-grid-layout">
@@ -571,7 +626,7 @@ export default function App() {
         <section id="approach" className="section">
 
           <div className="section-header reveal">
-            <span className="field-label">04 DEVELOPMENT APPROACH</span>
+            <span className="field-label">06 DEVELOPMENT APPROACH</span>
             <h2>How I Work</h2>
           </div>
 
@@ -669,7 +724,7 @@ export default function App() {
 
         <section id="contact" className="section">
           <div className="section-header reveal">
-            <span className="field-label">05 COMMUNICATIONS</span>
+            <span className="field-label">07 COMMUNICATIONS</span>
             <h2>Drop a line</h2>
           </div>
           <div className="contact-grid">
@@ -679,6 +734,7 @@ export default function App() {
                   type="text"
                   name="name"
                   placeholder="Your name"
+                  aria-label="Your name"
                   value={formData.name}
                   onChange={handleInputChange}
                   required
@@ -689,6 +745,7 @@ export default function App() {
                   pattern="[0-9]*"
                   name="phone"
                   placeholder="Your phone number (digits only)"
+                  aria-label="Your phone number"
                   value={formData.phone}
                   onChange={handleInputChange}
                   required
@@ -697,6 +754,7 @@ export default function App() {
                   type="email"
                   name="email"
                   placeholder="Your email address"
+                  aria-label="Your email address"
                   value={formData.email}
                   onChange={handleInputChange}
                   required
@@ -704,31 +762,127 @@ export default function App() {
               </div>
               <textarea
                 name="message"
-                rows={5}
+                rows={6}
                 placeholder="Tell me about your project pipeline..."
+                aria-label="Project details"
                 value={formData.message}
                 onChange={handleInputChange}
                 required
               />
-              <button type="submit" className="btn-submit" disabled={sending}>
+              <button type="submit" className="btn-submit" disabled={sending} aria-busy={sending}>
                 {sending ? 'Opening WhatsApp…' : 'Send via WhatsApp'}
               </button>
             </form>
 
             <div className="contact-sidebar reveal">
-                <span className="mono label">DIRECT EMAIL</span>
-              <a className="meta-box link-box" href="mailto:mascotech12345@gmail.com">
-                <span className="mono value">mascotech12345@gmail.com</span>
-              </a>
-              <span className="mono label">WHATSAPP LINE</span>
+
+              <div className="contact-intro">
+                <span className="mono label">COMMUNICATION CHANNELS</span>
+                <p>
+                  Choose the channel that works best for you.
+                </p>
+              </div>
+
+              {/* EMAIL */}
               <a
-                className="meta-box link-box"
+                className="contact-channel"
+                href="mailto:mascotech12345@gmail.com"
+              >
+                <div className="channel-icon email-icon">
+                  <svg
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M3 5h18v14H3V5zm0 0 9 7 9-7"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.8"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </div>
+
+                <div className="channel-content">
+                  <span className="channel-name">EMAIL</span>
+                  <span className="channel-description">
+                    Let's discuss your project
+                  </span>
+                  <span className="channel-value">
+                    mascotech12345@gmail.com
+                  </span>
+                </div>
+
+                <span className="channel-arrow">↗</span>
+              </a>
+
+
+              {/* WHATSAPP */}
+              <a
+                className="contact-channel"
                 href="https://wa.me/2349028224453"
                 target="_blank"
                 rel="noreferrer"
               >
-                <span className="mono value">+234 902 822 4453</span>
+                <div className="channel-icon whatsapp-icon">
+                  <svg
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fill="currentColor"
+                      d="M20.52 3.48A11.82 11.82 0 0 0 12.08 0C5.52 0 .18 5.34.18 11.9c0 2.1.55 4.15 1.6 5.96L.1 24l6.28-1.65a11.88 11.88 0 0 0 5.7 1.45h.01c6.56 0 11.9-5.34 11.9-11.9a11.82 11.82 0 0 0-3.47-8.42ZM12.09 21.78h-.01a9.88 9.88 0 0 1-5.03-1.38l-.36-.21-3.73.98 1-3.64-.23-.37a9.84 9.84 0 0 1-1.51-5.26C2.22 6.47 6.65 2.04 12.09 2.04c2.64 0 5.12 1.03 6.98 2.89a9.8 9.8 0 0 1 2.89 6.98c0 5.44-4.43 9.87-9.87 9.87Zm5.42-7.4c-.3-.15-1.77-.87-2.05-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.47-1.75-1.64-2.05-.17-.3-.02-.46.13-.61.14-.14.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.49s1.07 2.89 1.22 3.09c.15.2 2.1 3.21 5.09 4.5.71.31 1.27.49 1.7.63.71.23 1.36.2 1.87.12.57-.09 1.77-.72 2.02-1.42.25-.7.25-1.3.17-1.42-.07-.12-.27-.2-.57-.35Z"
+                    />
+                  </svg>
+                </div>
+
+                <div className="channel-content">
+                  <span className="channel-name">WHATSAPP</span>
+                  <span className="channel-description">
+                    Fastest way to reach me
+                  </span>
+                  <span className="channel-value">
+                    +234 902 822 4453
+                  </span>
+                </div>
+
+                <span className="channel-arrow">↗</span>
               </a>
+
+
+              {/* GITHUB */}
+              <a
+                className="contact-channel"
+                href="https://github.com/mascotech12345"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <div className="channel-icon github-icon">
+                  <svg
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fill="currentColor"
+                      d="M12 .5a12 12 0 0 0-3.79 23.39c.6.11.82-.26.82-.58v-2.04c-3.34.73-4.04-1.42-4.04-1.42-.55-1.39-1.33-1.76-1.33-1.76-1.09-.75.08-.74.08-.74 1.2.08 1.84 1.23 1.84 1.23 1.07 1.84 2.81 1.31 3.5 1 .11-.78.42-1.31.76-1.61-2.67-.3-5.47-1.34-5.47-5.95 0-1.31.47-2.38 1.23-3.22-.12-.3-.53-1.52.12-3.17 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.3-1.55 3.3-1.23 3.3-1.23.65 1.65.24 2.87.12 3.17.77.84 1.23 1.91 1.23 3.22 0 4.62-2.81 5.64-5.49 5.94.43.37.81 1.1.81 2.22v3.29c0 .32.22.69.83.58A12 12 0 0 0 12 .5Z"
+                    />
+                  </svg>
+                </div>
+
+                <div className="channel-content">
+                  <span className="channel-name">GITHUB</span>
+                  <span className="channel-description">
+                    Explore my development work
+                  </span>
+                  <span className="channel-value">
+                    github.com/mascotech12345
+                  </span>
+                </div>
+
+                <span className="channel-arrow">↗</span>
+              </a>
+
             </div>
           </div>
         </section>
@@ -786,11 +940,11 @@ export default function App() {
             </a>
 
             <a
-              href="https://linkedin.com/"
+              href="https://github.com/mascotech12345"
               target="_blank"
               rel="noreferrer"
             >
-              LinkedIn
+              GitHub
             </a>
 
           </div>
