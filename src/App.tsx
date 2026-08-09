@@ -249,15 +249,13 @@ function StatusPanel() {
     return () => clearInterval(t)
   }, [])
 
-  const ibadanTime = time.toLocaleTimeString('en-GB', {
-    timeZone: 'Africa/Lagos',
+  const localTime = time.toLocaleTimeString('en-GB', {
     hour: '2-digit',
     minute: '2-digit',
     second: '2-digit',
   })
 
-  const ibadanDate = time.toLocaleDateString('en-GB', {
-    timeZone: 'Africa/Lagos',
+  const localDate = time.toLocaleDateString('en-GB', {
     weekday: 'short',
     day: '2-digit',
     month: 'short',
@@ -280,10 +278,10 @@ function StatusPanel() {
           <span className="mono muted">LOCATION: Ibadan, Nigeria</span>
         </div>
         <div className="status-row">
-          <span className="mono muted">LOCAL TIME: {ibadanTime}</span>
+          <span className="mono muted">LOCAL TIME: {localTime}</span>
         </div>
         <div className="status-row">
-          <span className="mono muted">DATE: {ibadanDate}</span>
+          <span className="mono muted">DATE: {localDate}</span>
         </div>
       </div>
     </div>
