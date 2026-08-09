@@ -386,6 +386,11 @@ h2 {
   font-size: clamp(1.75rem, 4vw, 2.25rem);
   font-weight: 700;
   letter-spacing: -0.5px;
+  margin-bottom: 0.75rem;
+}
+
+.section-header .body-text {
+  margin-top: 0.5rem;
 }
 
 .body-text {
@@ -902,6 +907,18 @@ section.reveal.is-visible {
   gap: 1rem;
 }
 
+.field-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.field-error {
+  font-size: 0.8rem;
+  color: #f87171;
+  font-family: var(--font-mono);
+}
+
 .contact-form input, .contact-form textarea {
   background: var(--bg-panel);
   border: 1px solid var(--border-color);
@@ -917,6 +934,16 @@ section.reveal.is-visible {
 
 .contact-form input:focus, .contact-form textarea:focus {
   border-color: var(--vite-purple);
+}
+
+.contact-form input.has-error,
+.contact-form textarea.has-error {
+  border-color: #ef4444;
+}
+
+.contact-form input.has-error:focus,
+.contact-form textarea.has-error:focus {
+  border-color: #ef4444;
 }
 
 .btn-submit {
@@ -1196,6 +1223,182 @@ section.reveal.is-visible {
     cursor:pointer;
 
     font-size:1.8rem;
+}
+
+/* Hero load-in — always plays on page load, independent of scroll */
+@keyframes hero-rise {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.hero-in {
+  animation: hero-rise 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.hero-in-delay {
+  animation: hero-rise 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: 0.15s;
+}
+
+/* Project card icon links (repo + live site) */
+.card-links {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.card-icon-link {
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s, transform 0.2s;
+}
+
+.card-icon-link svg {
+  width: 18px;
+  height: 18px;
+}
+
+.card-icon-link:hover {
+  color: var(--text-main);
+  transform: translate(2px, -2px);
+}
+
+/* Testimonials */
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.testimonial-card {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  transition: 0.3s ease;
+}
+
+.testimonial-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--vite-purple);
+  box-shadow: 0 0 25px rgba(168, 85, 247, 0.15);
+}
+
+.testimonial-quote {
+  color: var(--text-main);
+  font-size: 0.98rem;
+  line-height: 1.7;
+  font-style: italic;
+}
+
+.testimonial-author {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  border-top: 1px solid var(--border-color);
+  padding-top: 1rem;
+}
+
+.testimonial-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.testimonial-role {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+/* Copy-to-clipboard button beside contact channels */
+.contact-channel-wrapper {
+  display: flex;
+  align-items: stretch;
+  gap: 0.6rem;
+}
+
+.contact-channel-wrapper .contact-channel {
+  flex: 1;
+}
+
+.copy-btn {
+  flex-shrink: 0;
+  width: 48px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-panel);
+  color: var(--text-muted);
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s ease;
+}
+
+.copy-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.copy-btn:hover {
+  border-color: var(--vite-purple);
+  color: var(--vite-purple);
+}
+
+.copy-btn.copied {
+  border-color: #10b981;
+  color: #10b981;
+}
+
+/* WhatsApp redirect toast */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 100px;
+  transform: translateX(-50%);
+  background: var(--bg-panel);
+  border: 1px solid var(--vite-purple);
+  padding: 0.85rem 1.5rem;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.85rem;
+  z-index: 998;
+  animation: toast-in 0.3s ease;
+  white-space: nowrap;
+}
+
+.toast-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--vite-purple);
+  flex-shrink: 0;
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translate(-50%, 10px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+@media (max-width: 480px) {
+  .toast {
+    left: 1rem;
+    right: 1rem;
+    transform: none;
+    bottom: 90px;
+    white-space: normal;
+    justify-content: center;
+  }
+  @keyframes toast-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
 }
 
 @media (max-width: 768px) {

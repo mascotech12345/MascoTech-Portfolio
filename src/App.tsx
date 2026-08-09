@@ -6,6 +6,7 @@ interface Project {
   stack: string
   desc: string
   href: string
+  repo: string
 }
 
 interface Skill {
@@ -25,6 +26,26 @@ interface Stat {
   description: string
 }
 
+interface Testimonial {
+  name: string
+  role: string
+  quote: string
+}
+
+interface FormData {
+  name: string
+  email: string
+  phone: string
+  message: string
+}
+
+interface FormErrors {
+  name?: string
+  email?: string
+  phone?: string
+  message?: string
+}
+
 const projects: Project[] = [
   {
     title: 'Holubuadey Auto',
@@ -32,6 +53,7 @@ const projects: Project[] = [
     stack: 'React · TypeScript · Vite · Tailwind',
     desc: 'Premium quality automobile sales and tracking web application with modular product displays and fully responsive search layout.',
     href: 'https://holubuadeyautos.vercel.app/',
+    repo: 'https://github.com/mascotech12345/holubuadey-auto',
   },
   {
     title: 'Kriz Graphics & Publicity',
@@ -39,6 +61,7 @@ const projects: Project[] = [
     stack: 'React · TypeScript · Firebase · Vite',
     desc: 'Business website with online booking, live order-status tracking, admin dashboard and gallery management for a print & design studio in Ibadan.',
     href: 'https://krizgraphicsandpublicity.vercel.app/',
+    repo: 'https://github.com/mascotech12345/kriz-graphics-publicity',
   },
   {
     title: 'Mufti Laundry Spot',
@@ -46,6 +69,7 @@ const projects: Project[] = [
     stack: 'HTML · CSS · JavaScript · Bootstrap',
     desc: 'Responsive service website for a laundry business, with a working contact form and WhatsApp integration.',
     href: 'https://muftilaundryspot.vercel.app/',
+    repo: 'https://github.com/mascotech12345/mufti-laundry-spot',
   },
 ]
 
@@ -128,6 +152,24 @@ const stats: Stat[] = [
   }
 ]
 
+const testimonials: Testimonial[] = [
+  {
+    name: 'Omogbolahan',
+    role: 'Mufti Laundry Spot',
+    quote: 'Mamoud built us a clean, responsive site with a contact form that actually works and a direct WhatsApp link — customers reach us faster now.',
+  },
+  {
+    name: 'Olyjey',
+    role: 'Kriz Graphics & Publicity',
+    quote: 'From online booking to live order tracking and an admin dashboard, he understood exactly what our studio needed and delivered a site that runs itself.',
+  },
+  {
+    name: 'Abdulqudus',
+    role: 'Holubuadey Auto',
+    quote: 'The site looks premium and the search actually works well on mobile, which is where most of our customers browse from.',
+  },
+]
+
 const navLinks: NavLink[] = [
   { href: '#about', label: 'About' },
   { href: '#stats', label: 'At a Glance' },
@@ -135,6 +177,7 @@ const navLinks: NavLink[] = [
   { href: '#projects', label: 'Projects' },
   { href: '#skills', label: 'Skills' },
   { href: '#approach', label: 'Approach' },
+  { href: '#testimonials', label: 'Testimonials' },
 ]
 
 function useRevealOnScroll(): void {
@@ -221,7 +264,7 @@ function StatusPanel() {
   })
 
   return (
-    <div className="status-panel reveal">
+    <div className="status-panel hero-in-delay">
       <div className="status-header">
         <span className="terminal-dot red"></span>
         <span className="terminal-dot yellow"></span>
@@ -314,18 +357,13 @@ function StatCard({ stat, delay }: { stat: Stat; delay: number }) {
   )
 }
 
-interface FormData {
-  name: string
-  email: string
-  phone: string
-  message: string
-}
-
 export default function App() {
   const [formData, setFormData] = useState<FormData>({ name: '', email: '', phone: '', message: '' })
+  const [formErrors, setFormErrors] = useState<FormErrors>({})
   const [menuOpen, setMenuOpen] = useState(false)
   const [sending, setSending] = useState(false)
   const [showTop, setShowTop] = useState(false)
+  const [copiedField, setCopiedField] = useState<string | null>(null)
 
   useRevealOnScroll()
   const activeSection = useActiveSection()
@@ -390,16 +428,41 @@ export default function App() {
   }, [])
 
   useEffect(() => {
-    document.title = 'MASCOTECH — Frontend & Full Stack Developer'
+    const title = 'MASCOTECH — Frontend & Full Stack Developer'
     const description =
       'Portfolio of Mamoud (MASCOTECH), a frontend and full-stack developer building fast, scalable web applications with React, TypeScript and Firebase.'
-    let meta = document.querySelector('meta[name="description"]')
-    if (!meta) {
-      meta = document.createElement('meta')
-      meta.setAttribute('name', 'description')
-      document.head.appendChild(meta)
+
+    document.title = title
+
+    const setMeta = (attr: 'name' | 'property', key: string, content: string) => {
+      let tag = document.querySelector<HTMLMetaElement>(`meta[${attr}="${key}"]`)
+      if (!tag) {
+        tag = document.createElement('meta')
+        tag.setAttribute(attr, key)
+        document.head.appendChild(tag)
+      }
+      tag.setAttribute('content', content)
     }
-    meta.setAttribute('content', description)
+
+    setMeta('name', 'description', description)
+    setMeta('property', 'og:title', title)
+    setMeta('property', 'og:description', description)
+    setMeta('property', 'og:type', 'website')
+    setMeta('name', 'twitter:card', 'summary_large_image')
+    setMeta('name', 'twitter:title', title)
+    setMeta('name', 'twitter:description', description)
+  }, [])
+
+  useEffect(() => {
+    const svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='#0a0a0c'/><text x='32' y='44' font-family='monospace' font-size='34' font-weight='700' fill='#a855f7' text-anchor='middle'>M</text></svg>`
+    const dataUri = `data:image/svg+xml,${encodeURIComponent(svg)}`
+    let link = document.querySelector<HTMLLinkElement>("link[rel~='icon']")
+    if (!link) {
+      link = document.createElement('link')
+      link.rel = 'icon'
+      document.head.appendChild(link)
+    }
+    link.href = dataUri
   }, [])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -414,8 +477,38 @@ export default function App() {
     setFormData(prev => ({ ...prev, [name]: value }))
   }
 
+  const validateForm = (): boolean => {
+    const errors: FormErrors = {}
+
+    if (!formData.name.trim()) {
+      errors.name = 'Enter your name'
+    }
+
+    if (!formData.phone.trim()) {
+      errors.phone = 'Enter your phone number'
+    } else if (formData.phone.trim().length < 7) {
+      errors.phone = 'That number looks too short'
+    }
+
+    if (!formData.email.trim()) {
+      errors.email = 'Enter your email address'
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
+      errors.email = 'Enter a valid email address'
+    }
+
+    if (!formData.message.trim()) {
+      errors.message = 'Tell me a bit about your project'
+    }
+
+    setFormErrors(errors)
+    return Object.keys(errors).length === 0
+  }
+
   const handleWhatsAppRedirect = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+
+    if (!validateForm()) return
+
     setSending(true)
 
     const baseNumber = '2349028224453'
@@ -431,7 +524,8 @@ export default function App() {
     setTimeout(() => {
       setSending(false)
       setFormData({ name: '', email: '', phone: '', message: '' })
-    }, 900)
+      setFormErrors({})
+    }, 1200)
   }
 
   const closeMenu = () => setMenuOpen(false)
@@ -440,6 +534,18 @@ export default function App() {
     e.preventDefault()
     window.scrollTo({ top: 0, behavior: 'smooth' })
     closeMenu()
+  }
+
+  const copyToClipboard = async (text: string, field: string) => {
+    try {
+      await navigator.clipboard.writeText(text)
+      setCopiedField(field)
+      setTimeout(() => {
+        setCopiedField(prev => (prev === field ? null : prev))
+      }, 2000)
+    } catch {
+      // Clipboard API unavailable — fail silently, the value is still visible to copy manually.
+    }
   }
 
   return (
@@ -483,9 +589,9 @@ export default function App() {
       </header>
 
       <main className="main-content">
-        <section className="hero reveal">
+        <section className="hero">
           <div className="hero-grid">
-            <div className="hero-text-block reveal">
+            <div className="hero-text-block hero-in">
               <span className="eyebrow">DEVELOPMENT ENVIRONMENT</span>
               <h1>
                 Mamoud<br />
@@ -497,6 +603,7 @@ export default function App() {
               <div className="hero-actions">
                 <a href="#projects" className="btn-primary">Explore work</a>
                 <a href="#contact" className="btn-secondary">Get in touch</a>
+                <a href="/Mamoud.pdf" download className="btn-secondary">Download CV</a>
               </div>
             </div>
             <StatusPanel />
@@ -588,22 +695,43 @@ export default function App() {
           </div>
           <div className="project-grid">
             {projects.map((p, i) => (
-              <a
+              <div
                 key={p.title}
-                href={p.href}
-                target="_blank"
-                rel="noreferrer"
                 className="project-card reveal"
                 style={{ '--reveal-delay': `${i * 100}ms` } as React.CSSProperties}
               >
                 <div className="card-top">
                   <span className="mono role-tag">{p.role}</span>
-                  <span className="arrow-icon">↗</span>
+                  <div className="card-links">
+                    <a
+                      href={p.repo}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="card-icon-link"
+                      aria-label={`View source code for ${p.title}`}
+                    >
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path
+                          fill="currentColor"
+                          d="M12 .5a12 12 0 0 0-3.79 23.39c.6.11.82-.26.82-.58v-2.04c-3.34.73-4.04-1.42-4.04-1.42-.55-1.39-1.33-1.76-1.33-1.76-1.09-.75.08-.74.08-.74 1.2.08 1.84 1.23 1.84 1.23 1.07 1.84 2.81 1.31 3.5 1 .11-.78.42-1.31.76-1.61-2.67-.3-5.47-1.34-5.47-5.95 0-1.31.47-2.38 1.23-3.22-.12-.3-.53-1.52.12-3.17 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.3-1.55 3.3-1.23 3.3-1.23.65 1.65.24 2.87.12 3.17.77.84 1.23 1.91 1.23 3.22 0 4.62-2.81 5.64-5.49 5.94.43.37.81 1.1.81 2.22v3.29c0 .32.22.69.83.58A12 12 0 0 0 12 .5Z"
+                        />
+                      </svg>
+                    </a>
+                    <a
+                      href={p.href}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="card-icon-link"
+                      aria-label={`View live site for ${p.title}`}
+                    >
+                      <span className="arrow-icon">↗</span>
+                    </a>
+                  </div>
                 </div>
                 <h3>{p.title}</h3>
                 <p>{p.desc}</p>
                 <span className="mono stack">{p.stack}</span>
-              </a>
+              </div>
             ))}
           </div>
         </section>
@@ -793,53 +921,96 @@ export default function App() {
 
         </section>
 
+        <section id="testimonials" className="section reveal">
+
+          <div className="section-header">
+            <span className="field-label reveal">07 TESTIMONIALS</span>
+            <h2 className="reveal" style={{ '--reveal-delay': '100ms' } as React.CSSProperties}>What clients say</h2>
+          </div>
+
+          <div className="testimonials-grid">
+
+            {testimonials.map((t, i) => (
+              <div
+                key={t.name + i}
+                className="testimonial-card reveal"
+                style={{ '--reveal-delay': `${i * 100}ms` } as React.CSSProperties}
+              >
+                <p className="testimonial-quote">"{t.quote}"</p>
+                <div className="testimonial-author">
+                  <span className="testimonial-name">{t.name}</span>
+                  <span className="testimonial-role">{t.role}</span>
+                </div>
+              </div>
+            ))}
+
+          </div>
+
+        </section>
+
         <section id="contact" className="section reveal">
           <div className="section-header">
-            <span className="field-label reveal">07 COMMUNICATIONS</span>
+            <span className="field-label reveal">08 COMMUNICATIONS</span>
             <h2 className="reveal" style={{ '--reveal-delay': '100ms' } as React.CSSProperties}>Drop a line</h2>
           </div>
           <div className="contact-grid">
-            <form onSubmit={handleWhatsAppRedirect} className="contact-form reveal">
+            <form onSubmit={handleWhatsAppRedirect} className="contact-form reveal" noValidate>
               <div className="input-stack">
-                <input
-                  type="text"
-                  name="name"
-                  placeholder="Your name"
-                  aria-label="Your name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  required
-                />
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  name="phone"
-                  placeholder="Your phone number (digits only)"
-                  aria-label="Your phone number"
-                  value={formData.phone}
-                  onChange={handleInputChange}
-                  required
-                />
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="Your email address"
-                  aria-label="Your email address"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  required
-                />
+                <div className="field-wrap">
+                  <input
+                    type="text"
+                    name="name"
+                    placeholder="Your name"
+                    aria-label="Your name"
+                    aria-invalid={!!formErrors.name}
+                    className={formErrors.name ? 'has-error' : ''}
+                    value={formData.name}
+                    onChange={handleInputChange}
+                  />
+                  {formErrors.name && <span className="field-error">{formErrors.name}</span>}
+                </div>
+                <div className="field-wrap">
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    name="phone"
+                    placeholder="Your phone number (digits only)"
+                    aria-label="Your phone number"
+                    aria-invalid={!!formErrors.phone}
+                    className={formErrors.phone ? 'has-error' : ''}
+                    value={formData.phone}
+                    onChange={handleInputChange}
+                  />
+                  {formErrors.phone && <span className="field-error">{formErrors.phone}</span>}
+                </div>
+                <div className="field-wrap">
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="Your email address"
+                    aria-label="Your email address"
+                    aria-invalid={!!formErrors.email}
+                    className={formErrors.email ? 'has-error' : ''}
+                    value={formData.email}
+                    onChange={handleInputChange}
+                  />
+                  {formErrors.email && <span className="field-error">{formErrors.email}</span>}
+                </div>
               </div>
-              <textarea
-                name="message"
-                rows={6}
-                placeholder="Tell me about your project pipeline..."
-                aria-label="Project details"
-                value={formData.message}
-                onChange={handleInputChange}
-                required
-              />
+              <div className="field-wrap">
+                <textarea
+                  name="message"
+                  rows={6}
+                  placeholder="Tell me about your project pipeline..."
+                  aria-label="Project details"
+                  aria-invalid={!!formErrors.message}
+                  className={formErrors.message ? 'has-error' : ''}
+                  value={formData.message}
+                  onChange={handleInputChange}
+                />
+                {formErrors.message && <span className="field-error">{formErrors.message}</span>}
+              </div>
               <button type="submit" className="btn-submit" disabled={sending} aria-busy={sending}>
                 {sending ? 'Opening WhatsApp…' : 'Send via WhatsApp'}
               </button>
@@ -855,72 +1026,108 @@ export default function App() {
               </div>
 
               {/* EMAIL */}
-              <a
-                className="contact-channel"
-                href="mailto:mascotech12345@gmail.com"
-              >
-                <div className="channel-icon email-icon">
-                  <svg
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                  >
-                    <path
-                      d="M3 5h18v14H3V5zm0 0 9 7 9-7"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.8"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </div>
+              <div className="contact-channel-wrapper">
+                <a
+                  className="contact-channel"
+                  href="mailto:mascotech12345@gmail.com"
+                >
+                  <div className="channel-icon email-icon">
+                    <svg
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M3 5h18v14H3V5zm0 0 9 7 9-7"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.8"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </div>
 
-                <div className="channel-content">
-                  <span className="channel-name">EMAIL</span>
-                  <span className="channel-description">
-                    Let's discuss your project
-                  </span>
-                  <span className="channel-value">
-                    mascotech12345@gmail.com
-                  </span>
-                </div>
+                  <div className="channel-content">
+                    <span className="channel-name">EMAIL</span>
+                    <span className="channel-description">
+                      Let's discuss your project
+                    </span>
+                    <span className="channel-value">
+                      mascotech12345@gmail.com
+                    </span>
+                  </div>
 
-                <span className="channel-arrow">↗</span>
-              </a>
-
+                  <span className="channel-arrow">↗</span>
+                </a>
+                <button
+                  type="button"
+                  className={`copy-btn ${copiedField === 'email' ? 'copied' : ''}`}
+                  onClick={() => copyToClipboard('mascotech12345@gmail.com', 'email')}
+                  aria-label="Copy email address"
+                >
+                  {copiedField === 'email' ? (
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M5 12l5 5L19 7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  ) : (
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <rect x="8" y="8" width="12" height="12" rx="2" fill="none" stroke="currentColor" strokeWidth="1.8" />
+                      <path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" fill="none" stroke="currentColor" strokeWidth="1.8" />
+                    </svg>
+                  )}
+                </button>
+              </div>
 
               {/* WHATSAPP */}
-              <a
-                className="contact-channel"
-                href="https://wa.me/2349028224453"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <div className="channel-icon whatsapp-icon">
-                  <svg
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                  >
-                    <path
-                      fill="currentColor"
-                      d="M20.52 3.48A11.82 11.82 0 0 0 12.08 0C5.52 0 .18 5.34.18 11.9c0 2.1.55 4.15 1.6 5.96L.1 24l6.28-1.65a11.88 11.88 0 0 0 5.7 1.45h.01c6.56 0 11.9-5.34 11.9-11.9a11.82 11.82 0 0 0-3.47-8.42ZM12.09 21.78h-.01a9.88 9.88 0 0 1-5.03-1.38l-.36-.21-3.73.98 1-3.64-.23-.37a9.84 9.84 0 0 1-1.51-5.26C2.22 6.47 6.65 2.04 12.09 2.04c2.64 0 5.12 1.03 6.98 2.89a9.8 9.8 0 0 1 2.89 6.98c0 5.44-4.43 9.87-9.87 9.87Zm5.42-7.4c-.3-.15-1.77-.87-2.05-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.47-1.75-1.64-2.05-.17-.3-.02-.46.13-.61.14-.14.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.49s1.07 2.89 1.22 3.09c.15.2 2.1 3.21 5.09 4.5.71.31 1.27.49 1.7.63.71.23 1.36.2 1.87.12.57-.09 1.77-.72 2.02-1.42.25-.7.25-1.3.17-1.42-.07-.12-.27-.2-.57-.35Z"
-                    />
-                  </svg>
-                </div>
+              <div className="contact-channel-wrapper">
+                <a
+                  className="contact-channel"
+                  href="https://wa.me/2349028224453"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <div className="channel-icon whatsapp-icon">
+                    <svg
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                    >
+                      <path
+                        fill="currentColor"
+                        d="M20.52 3.48A11.82 11.82 0 0 0 12.08 0C5.52 0 .18 5.34.18 11.9c0 2.1.55 4.15 1.6 5.96L.1 24l6.28-1.65a11.88 11.88 0 0 0 5.7 1.45h.01c6.56 0 11.9-5.34 11.9-11.9a11.82 11.82 0 0 0-3.47-8.42ZM12.09 21.78h-.01a9.88 9.88 0 0 1-5.03-1.38l-.36-.21-3.73.98 1-3.64-.23-.37a9.84 9.84 0 0 1-1.51-5.26C2.22 6.47 6.65 2.04 12.09 2.04c2.64 0 5.12 1.03 6.98 2.89a9.8 9.8 0 0 1 2.89 6.98c0 5.44-4.43 9.87-9.87 9.87Zm5.42-7.4c-.3-.15-1.77-.87-2.05-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.47-1.75-1.64-2.05-.17-.3-.02-.46.13-.61.14-.14.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.49s1.07 2.89 1.22 3.09c.15.2 2.1 3.21 5.09 4.5.71.31 1.27.49 1.7.63.71.23 1.36.2 1.87.12.57-.09 1.77-.72 2.02-1.42.25-.7.25-1.3.17-1.42-.07-.12-.27-.2-.57-.35Z"
+                      />
+                    </svg>
+                  </div>
 
-                <div className="channel-content">
-                  <span className="channel-name">WHATSAPP</span>
-                  <span className="channel-description">
-                    Fastest way to reach me
-                  </span>
-                  <span className="channel-value">
-                    +234 902 822 4453
-                  </span>
-                </div>
+                  <div className="channel-content">
+                    <span className="channel-name">WHATSAPP</span>
+                    <span className="channel-description">
+                      Fastest way to reach me
+                    </span>
+                    <span className="channel-value">
+                      +234 902 822 4453
+                    </span>
+                  </div>
 
-                <span className="channel-arrow">↗</span>
-              </a>
-
+                  <span className="channel-arrow">↗</span>
+                </a>
+                <button
+                  type="button"
+                  className={`copy-btn ${copiedField === 'phone' ? 'copied' : ''}`}
+                  onClick={() => copyToClipboard('+2349028224453', 'phone')}
+                  aria-label="Copy phone number"
+                >
+                  {copiedField === 'phone' ? (
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M5 12l5 5L19 7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  ) : (
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <rect x="8" y="8" width="12" height="12" rx="2" fill="none" stroke="currentColor" strokeWidth="1.8" />
+                      <path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" fill="none" stroke="currentColor" strokeWidth="1.8" />
+                    </svg>
+                  )}
+                </button>
+              </div>
 
               {/* GITHUB */}
               <a
@@ -990,6 +1197,8 @@ export default function App() {
 
             <a href="#approach">Approach</a>
 
+            <a href="#testimonials">Testimonials</a>
+
             <a href="#contact">Contact</a>
 
           </div>
@@ -1034,6 +1243,13 @@ export default function App() {
         </div>
 
       </footer>
+
+      {sending && (
+        <div className="toast" role="status">
+          <span className="toast-dot" />
+          Redirecting to WhatsApp…
+        </div>
+      )}
 
       <button
         type="button"
